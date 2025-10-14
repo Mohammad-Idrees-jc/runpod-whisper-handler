@@ -1,7 +1,16 @@
 """
 RunPod Serverless Handler for Whisper Transcription
-Deploy this on RunPod as a serverless endpoint
 """
+```
+
+To:
+```
+"""
+RunPod Serverless Handler for Whisper Transcription
+Last updated: Oct 14, 2025
+"""
+
+
 import runpod
 import whisper
 import tempfile
