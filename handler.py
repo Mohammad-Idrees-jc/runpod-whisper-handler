@@ -7,7 +7,7 @@ To:
 ```
 """
 RunPod Serverless Handler for Whisper Transcription
-Last updated: Oct 14, 2025
+Last updated: Oct 14, 2025 khani
 """
 
 
