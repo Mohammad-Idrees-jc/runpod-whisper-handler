@@ -1,16 +1,7 @@
 """
 RunPod Serverless Handler for Whisper Transcription
+Last updated: Oct 15, 2025 - Fixed for Contabo client
 """
-```
-
-To:
-```
-"""
-RunPod Serverless Handler for Whisper Transcription
-Last updated: Oct 14, 2025 khani
-"""
-
-
 import runpod
 import whisper
 import tempfile
@@ -28,19 +19,17 @@ print(f"✅ Model '{MODEL_NAME}' loaded successfully!")
 def transcribe_handler(job):
     """
     Handler for RunPod serverless transcription
-
     Input format:
     {
         "audio_base64": "base64_encoded_audio_data",
         "file_extension": "wav"  # optional
     }
 
-    Output format:
+    Output format (✅ Fixed to match Contabo client expectations):
     {
-        "transcription": {...whisper_result...},
-        "detected_language": "en",
-        "segments": [...],
         "text": "full transcribed text",
+        "segments": [...],
+        "detected_language": "en",
         "duration": 123.45
     }
     """
@@ -61,6 +50,11 @@ def transcribe_handler(job):
         except Exception as e:
             return {"error": f"Invalid base64 encoding: {str(e)}"}
 
+        # 🔧 FIX: Check file size limit (50MB)
+        file_size_mb = len(audio_data) / (1024 * 1024)
+        if file_size_mb > 50:
+            return {"error": f"File too large: {file_size_mb:.1f}MB (max 50MB)"}
+
         # Save to temporary file
         file_ext = job_input.get('file_extension', 'wav')
         tmp_path = None
@@ -79,16 +73,20 @@ def transcribe_handler(job):
             detected_lang = result.get("language", "unknown")
             duration = result.get("duration", 0)
 
+            # 🔧 FIX: Check duration limit (10 minutes = 600 seconds)
+            if duration > 600:
+                return {"error": f"Audio too long: {duration/60:.1f} minutes (max 10 minutes)"}
+
             print(f"✅ Transcription complete!")
             print(f"   Language: {detected_lang}")
             print(f"   Duration: {duration:.1f}s")
             print(f"   Segments: {len(result.get('segments', []))}")
 
+            # 🔧 FIX: Return format matching subtitle_utils.py expectations
             return {
-                "transcription": result,
-                "detected_language": detected_lang,
-                "segments": result.get("segments", []),
                 "text": result.get("text", ""),
+                "segments": result.get("segments", []),
+                "detected_language": detected_lang,
                 "duration": duration
             }
 
@@ -108,4 +106,7 @@ def transcribe_handler(job):
 # Start the RunPod serverless handler
 if __name__ == "__main__":
     print("🚀 Starting RunPod Whisper handler...")
+    print(f"📦 Model: {MODEL_NAME}")
+    print(f"⏱️ Max duration: 10 minutes")
+    print(f"📏 Max size: 50MB")
     runpod.serverless.start({"handler": transcribe_handler})
