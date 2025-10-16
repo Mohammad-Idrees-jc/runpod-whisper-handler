@@ -11,7 +11,7 @@ import traceback
 
 # Load Whisper model once (during cold start)
 print("🔄 Loading Whisper model...")
-MODEL_NAME = os.getenv("WHISPER_MODEL", "large-v3")
+MODEL_NAME = os.getenv("WHISPER_MODEL", "large-v1")
 
 try:
     model = whisper.load_model(MODEL_NAME)
