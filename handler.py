@@ -83,8 +83,10 @@ def transcribe_handler(job):
                 language=None,  # Auto-detect
                 task='transcribe'
             )
-            
-            detected_lang = result.get("language", "unknown")
+
+            #  the following line is changed for testing
+            # detected_lang = result.get("language", "unknown")
+            detected_lang = "ur"
             duration = result.get("duration", 0)
             
             # Check duration limit (10 minutes = 600 seconds)
