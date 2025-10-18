@@ -14,7 +14,7 @@ print("🚀 STARTING RUNPOD WHISPER HANDLER")
 print("=" * 60)
 
 # Load Whisper model once (during cold start)
-MODEL_NAME = os.getenv("WHISPER_MODEL", "medium")
+MODEL_NAME = os.getenv("WHISPER_MODEL", "large-v2")
 print(f"📦 Loading Whisper model: {MODEL_NAME}")
 
 try:
